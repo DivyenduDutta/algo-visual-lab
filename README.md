@@ -7,7 +7,9 @@
     <a href="https://github.com/DivyenduDutta/algo-visual-lab/blob/master/LICENSE"><img src="https://img.shields.io/github/license/DivyenduDutta/algo-visual-lab?style=flat-square" alt="License"></a>
     <a href="https://github.com/ambv/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Black"></a>
   </p>
+
 ![CI](https://github.com/DivyenduDutta/algo-visual-lab/actions/workflows/ci.yml/badge.svg)
+
 </div>
 
 ### For developers
