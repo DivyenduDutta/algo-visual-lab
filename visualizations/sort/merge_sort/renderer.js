@@ -1,7 +1,17 @@
+// Color constants
+const COLORS = {
+  BACKGROUND: { r: 41, g: 50, b: 65 },
+  NEUTRAL_BAR: { r: 131, g: 117, b: 105 },
+  COMPARE: { r: 255, g: 99, b: 71 }, // Tomato red
+  SPLIT: { r: 152, g: 193, b: 217 }, // Light blue
+  MERGE_LEFT: { r: 0, g: 150, b: 136 }, // Teal
+  MERGE_RIGHT: { r: 101, g: 113, b: 83 }, // Dark green
+  TEXT: { r: 255, g: 255, b: 255 }, // White
+};
+
 class Renderer {
   constructor(values) {
     this.values = [...values];
-
     this.highlighted = [];
     this.highlightType = null;
     this.highlightLabels = {};
@@ -9,54 +19,85 @@ class Renderer {
   }
 
   render() {
-    background(color(41, 50, 65));
+    background(
+      color(COLORS.BACKGROUND.r, COLORS.BACKGROUND.g, COLORS.BACKGROUND.b),
+    );
 
     const barWidth = width / this.values.length;
 
+    // Draw all bars
     for (let i = 0; i < this.values.length; i++) {
       const value = this.values[i];
+      const barColor = this.getBarColor(i);
 
-      let colorValue = color(131, 117, 105);
-
-      if (this.highlightType === "merge" && this.mergeRange) {
-        const { startIdx, middleIdx, endIdx } = this.mergeRange;
-        if (i >= startIdx && i <= middleIdx) {
-          colorValue = color(0, 150, 136); // left sub-array: teal
-        } else if (i > middleIdx && i <= endIdx) {
-          colorValue = color(101, 113, 83); // right sub-array: orange
-        }
-      } else if (this.highlighted.includes(i)) {
-        if (this.highlightType === "compare") {
-          colorValue = color(255, 99, 71); // compare: tomato/red
-        } else if (this.highlightType === "split") {
-          colorValue = color(152, 193, 217); // split: original light blue
-        } else {
-          colorValue = color(152, 193, 217);
-        }
-      }
-
-      fill(colorValue);
+      fill(barColor);
       noStroke();
-
       rect(i * barWidth, height - value, barWidth - 2, value);
 
-      if (
-        (this.highlightType === "split" || this.highlightType === "merge") &&
-        this.highlightLabels[i]
-      ) {
-        fill(255);
-        textAlign(CENTER, BOTTOM);
-        textSize(14);
-        textLeading(16);
-        const label = Array.isArray(this.highlightLabels[i])
-          ? this.highlightLabels[i].join("\n")
-          : this.highlightLabels[i];
-        text(label, i * barWidth + barWidth / 2, height - value - 8);
+      // Draw labels for split and merge animations
+      this.drawBarLabel(i, barWidth, value);
+    }
+
+    // Draw event type label (split/merge)
+    this.drawEventLabel();
+  }
+
+  getBarColor(barIndex) {
+    if (this.highlightType === ANIMATION_TYPE.MERGE && this.mergeRange) {
+      const { startIdx, middleIdx, endIdx } = this.mergeRange;
+      if (barIndex >= startIdx && barIndex <= middleIdx) {
+        return color(
+          COLORS.MERGE_LEFT.r,
+          COLORS.MERGE_LEFT.g,
+          COLORS.MERGE_LEFT.b,
+        );
+      } else if (barIndex > middleIdx && barIndex <= endIdx) {
+        return color(
+          COLORS.MERGE_RIGHT.r,
+          COLORS.MERGE_RIGHT.g,
+          COLORS.MERGE_RIGHT.b,
+        );
+      }
+    } else if (this.highlighted.includes(barIndex)) {
+      if (this.highlightType === ANIMATION_TYPE.COMPARE) {
+        return color(COLORS.COMPARE.r, COLORS.COMPARE.g, COLORS.COMPARE.b);
+      } else if (this.highlightType === ANIMATION_TYPE.SPLIT) {
+        return color(COLORS.SPLIT.r, COLORS.SPLIT.g, COLORS.SPLIT.b);
       }
     }
 
-    if (this.highlightType === "merge" || this.highlightType === "split") {
-      fill(255);
+    return color(
+      COLORS.NEUTRAL_BAR.r,
+      COLORS.NEUTRAL_BAR.g,
+      COLORS.NEUTRAL_BAR.b,
+    );
+  }
+
+  drawBarLabel(barIndex, barWidth, barHeight) {
+    if (
+      (this.highlightType === ANIMATION_TYPE.SPLIT ||
+        this.highlightType === ANIMATION_TYPE.MERGE) &&
+      this.highlightLabels[barIndex]
+    ) {
+      fill(COLORS.TEXT.r, COLORS.TEXT.g, COLORS.TEXT.b);
+      textAlign(CENTER, BOTTOM);
+      textSize(14);
+      textLeading(16);
+
+      const label = Array.isArray(this.highlightLabels[barIndex])
+        ? this.highlightLabels[barIndex].join("\n")
+        : this.highlightLabels[barIndex];
+
+      text(label, barIndex * barWidth + barWidth / 2, height - barHeight - 8);
+    }
+  }
+
+  drawEventLabel() {
+    if (
+      this.highlightType === ANIMATION_TYPE.MERGE ||
+      this.highlightType === ANIMATION_TYPE.SPLIT
+    ) {
+      fill(COLORS.TEXT.r, COLORS.TEXT.g, COLORS.TEXT.b);
       textAlign(CENTER, TOP);
       textSize(18);
       text(this.highlightType, width / 2, 16);
@@ -64,39 +105,67 @@ class Renderer {
   }
 
   applyAnimation(animation) {
+    this.resetState();
+
+    switch (animation.type) {
+      case ANIMATION_TYPE.COMPARE:
+        this.applyCompareAnimation(animation);
+        break;
+      case ANIMATION_TYPE.OVERWRITE:
+        this.applyOverwriteAnimation(animation);
+        break;
+      case ANIMATION_TYPE.SPLIT:
+      case ANIMATION_TYPE.MERGE:
+        this.applySplitOrMergeAnimation(animation);
+        break;
+    }
+  }
+
+  resetState() {
     this.highlighted = [];
     this.highlightType = null;
     this.highlightLabels = {};
     this.mergeRange = null;
+  }
 
-    if (animation.type === "compare") {
-      this.highlighted = animation.indices;
-      this.highlightType = "compare";
-    } else if (animation.type === "overwrite") {
-      this.values[animation.index] = animation.value;
-    } else if (animation.type === "split" || animation.type === "merge") {
-      const [startIdx, middleIdx, endIdx] = animation.indices;
-      this.highlightType = animation.type;
-      if (animation.type === "merge") {
-        this.mergeRange = { startIdx, middleIdx, endIdx };
-        this.highlighted = [];
-        for (let idx = startIdx; idx <= endIdx; idx++) {
-          this.highlighted.push(idx);
-        }
-      } else {
-        this.highlighted = [startIdx, middleIdx, endIdx];
-      }
+  applyCompareAnimation(animation) {
+    this.highlighted = animation.indices;
+    this.highlightType = ANIMATION_TYPE.COMPARE;
+  }
 
-      const addLabel = (index, label) => {
-        if (!this.highlightLabels[index]) {
-          this.highlightLabels[index] = [];
-        }
-        this.highlightLabels[index].push(label);
-      };
+  applyOverwriteAnimation(animation) {
+    this.values[animation.index] = animation.value;
+  }
 
-      addLabel(startIdx, `start = ${startIdx}`);
-      addLabel(middleIdx, `mid = ${middleIdx}`);
-      addLabel(endIdx, `end = ${endIdx}`);
+  applySplitOrMergeAnimation(animation) {
+    const [startIdx, middleIdx, endIdx] = animation.indices;
+    this.highlightType = animation.type;
+
+    if (animation.type === ANIMATION_TYPE.MERGE) {
+      this.mergeRange = { startIdx, middleIdx, endIdx };
+      // Highlight all bars in merge range
+      this.highlighted = Array.from(
+        { length: endIdx - startIdx + 1 },
+        (_, i) => startIdx + i,
+      );
+    } else {
+      // For split, highlight only the key points
+      this.highlighted = [startIdx, middleIdx, endIdx];
     }
+
+    this.addLabels(startIdx, middleIdx, endIdx);
+  }
+
+  addLabels(startIdx, middleIdx, endIdx) {
+    const addLabel = (index, label) => {
+      if (!this.highlightLabels[index]) {
+        this.highlightLabels[index] = [];
+      }
+      this.highlightLabels[index].push(label);
+    };
+
+    addLabel(startIdx, `start = ${startIdx}`);
+    addLabel(middleIdx, `mid = ${middleIdx}`);
+    addLabel(endIdx, `end = ${endIdx}`);
   }
 }

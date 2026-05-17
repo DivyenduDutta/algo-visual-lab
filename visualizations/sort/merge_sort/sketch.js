@@ -1,12 +1,16 @@
+// Visualization state
 let values = [];
 let renderer;
-
 let animations = [];
 let animationIndex = 0;
 let paused = false;
 
+// Configuration
 const ARRAY_SIZE = 10;
-const ANIMATION_SPEED = 60; // Increase this value to slow down animation
+const ANIMATION_SPEED = 60; // Frames between animation steps; increase to slow down
+const CONTROL_HINT = "SPACE: Pause / Resume   R: Restart";
+const CONTROL_HINT_SIZE = 16;
+const PAUSED_TEXT_SIZE = 28;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -20,30 +24,37 @@ function setup() {
 
 function draw() {
   background(17);
-
   renderer.render();
 
+  drawControlHints();
+  if (paused) drawPausedOverlay();
+
+  if (!paused) advanceAnimation();
+}
+
+function drawControlHints() {
   fill(255);
   noStroke();
-  textSize(16);
+  textSize(CONTROL_HINT_SIZE);
   textAlign(LEFT, TOP);
-  text("SPACE: Pause / Resume   R: Restart", 20, 20);
+  text(CONTROL_HINT, 20, 20);
+}
 
-  if (paused) {
-    fill(color(0, 0, 0));
-    textSize(28);
-    textAlign(CENTER, CENTER);
-    text("Paused", width / 2, height / 2);
-  }
+function drawPausedOverlay() {
+  fill(color(0, 0, 0));
+  textSize(PAUSED_TEXT_SIZE);
+  textAlign(CENTER, CENTER);
+  text("Paused", width / 2, height / 2);
+}
 
-  if (!paused && frameCount % ANIMATION_SPEED === 0) {
-    if (animationIndex < animations.length) {
-      const animation = animations[animationIndex];
-
-      renderer.applyAnimation(animation);
-
-      animationIndex++;
-    }
+function advanceAnimation() {
+  if (
+    frameCount % ANIMATION_SPEED === 0 &&
+    animationIndex < animations.length
+  ) {
+    const animation = animations[animationIndex];
+    renderer.applyAnimation(animation);
+    animationIndex++;
   }
 }
 
@@ -56,23 +67,26 @@ function generateNewArray() {
 }
 
 function keyPressed() {
-  // Press SPACE to pause/resume
   if (key === " ") {
-    paused = !paused;
+    togglePause();
     return;
   }
 
-  // Press R to restart
   if (key === "r" || key === "R") {
-    generateNewArray();
-
-    renderer = new Renderer(values);
-
-    animations = generateMergeSortAnimations([...values]);
-
-    animationIndex = 0;
-    paused = false;
+    restartAnimation();
   }
+}
+
+function togglePause() {
+  paused = !paused;
+}
+
+function restartAnimation() {
+  generateNewArray();
+  renderer = new Renderer(values);
+  animations = generateMergeSortAnimations([...values]);
+  animationIndex = 0;
+  paused = false;
 }
 
 function windowResized() {
