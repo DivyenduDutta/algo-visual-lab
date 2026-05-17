@@ -44,4 +44,4 @@ manim -pql sort/merge_sort/merge_sort_complexity.py MergeSortComplexity
 
 #### Merge Sort
 
-<iframe src="https://drive.google.com/file/d/1z137v43LBnus1zSdPsdFBec--uXhb3jn/preview" width="640" height="480"></iframe>
+[![Merge Sort Visualized](https://github.com/user-attachments/assets/71ec1d04-f78a-4c0b-96c1-40f5fd973c93)](https://drive.google.com/file/d/1z137v43LBnus1zSdPsdFBec--uXhb3jn/view?usp=sharing)
