@@ -1,10 +1,18 @@
 # algo-visual-lab
 Algorithms visualized using beautiful animations and explanations. Uses P5.js and manim.
 
+  <p>
+    <a href="https://github.com/DivyenduDutta/algo-visual-lab/blob/master/LICENSE"><img src="https://img.shields.io/github/license/DivyenduDutta/algo-visual-lab?style=flat-square" alt="License"></a>
+    <a href="https://github.com/ambv/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Black"></a>
+  </p>
+
+![CI](https://github.com/DivyenduDutta/algo-visual-lab/actions/workflows/ci.yaml/badge.svg)
+
 ### For developers
 
 This project uses [pyrefly](https://pyrefly.org/) as the type checker for python in the pre-commit-config.
-And for javascript, it uses ESlint and prettier in the pre-commit-config.
+
+And for javascript, it uses [ESlint](https://eslint.org/) and [Prettier](https://prettier.io/) in the pre-commit-config.
 
 To setup pre-commit-config, run `pre-commit install` from the root directory ie, `algo-visual-lab`.
 
