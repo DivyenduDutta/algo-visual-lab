@@ -1,12 +1,16 @@
 # algo-visual-lab
-Algorithms visualized using beautiful animations and explanations. Uses P5.js and manim.
+<div align="center">
+  <img src="atlas_icon.png" alt="atlas" width="575" height="337">
+
+  <p><em>Algorithms visualized using beautiful animations and explanations. Uses P5.js and manim.</em></p>
 
   <p>
     <a href="https://github.com/DivyenduDutta/algo-visual-lab/blob/master/LICENSE"><img src="https://img.shields.io/github/license/DivyenduDutta/algo-visual-lab?style=flat-square" alt="License"></a>
     <a href="https://github.com/ambv/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Black"></a>
   </p>
+</div>
 
-![CI](https://github.com/DivyenduDutta/algo-visual-lab/actions/workflows/ci.yaml/badge.svg)
+![CI](https://github.com/DivyenduDutta/algo-visual-lab/actions/workflows/ci.yml/badge.svg)
 
 ### For developers
 
