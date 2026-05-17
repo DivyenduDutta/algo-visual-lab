@@ -44,7 +44,7 @@ jobs:
 
 
       # -------------------------
-      # Python pre-commit
+      # Python and JS pre-commit
       # -------------------------
 
       - name: Run pre-commit (linting/formatting/mypy etc)
@@ -52,27 +52,3 @@ jobs:
         run: |
           source .venv/bin/activate
           pre-commit run --all-files --show-diff-on-failure
-
-      # -------------------------
-      # Node.js setup
-      # -------------------------
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 25.9.0
-
-      - name: Install frontend dependencies
-        run: |
-          cd visualizations
-          npm install
-
-      # -------------------------
-      # Frontend linting
-      # -------------------------
-
-      - name: Run ESLint
-        run: npx eslint . --max-warnings=0
-
-      - name: Check Prettier formatting
-        run: npx prettier . --check
