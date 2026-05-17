@@ -34,7 +34,7 @@ pip install -r requirements.txt
 ```bash
 $env:PYTHONPATH = \full\path\to\projectroot
 ```
-projectroot is `\manim\` folder
+projectroot is `\algo-visual-lab\` folder
 
 ```bash
 manim -pql sort/merge_sort/merge_sort_complexity.py MergeSortComplexity
