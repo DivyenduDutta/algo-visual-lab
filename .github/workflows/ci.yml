@@ -50,7 +50,7 @@ jobs:
       - name: Run pre-commit (linting/formatting/mypy etc)
         shell: bash -l {0}
         run: |
-          conda activate atlas
+          .venv\Scripts\activate.bat
           pre-commit run --all-files --show-diff-on-failure
 
       # -------------------------

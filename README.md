@@ -44,6 +44,8 @@ manim -pql sort/merge_sort/merge_sort_complexity.py MergeSortComplexity
 
 #### Merge Sort
 
+> Click the images to watch the video
+
 [![Merge Sort Visualized](https://github.com/user-attachments/assets/71ec1d04-f78a-4c0b-96c1-40f5fd973c93)](https://drive.google.com/file/d/1z137v43LBnus1zSdPsdFBec--uXhb3jn/view?usp=sharing)
 
 [![Merge Sort Time Complexity](https://github.com/user-attachments/assets/daa65f62-5af9-4858-bbe9-8a7a0ac93453)](https://drive.google.com/file/d/13ifXcYKlytm3IeLO9dnz3vCNhz99O1Xg/view?usp=sharing)
