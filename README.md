@@ -39,3 +39,9 @@ projectroot is `\manim\` folder
 ```bash
 manim -pql sort/merge_sort/merge_sort_complexity.py MergeSortComplexity
 ```
+
+### Demo
+
+#### Merge Sort
+
+![Merge Sort Visualized](https://drive.google.com/file/d/1z137v43LBnus1zSdPsdFBec--uXhb3jn/view?usp=sharing)
