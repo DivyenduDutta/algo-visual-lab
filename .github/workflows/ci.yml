@@ -1,0 +1,71 @@
+name: CI [pre-commit checks]
+
+on:
+  push: # this triggers on push events on all branches
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  ci-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # -------------------------
+      # Python setup
+      # -------------------------
+
+      - name: Set PYTHONPATH
+        run: |
+          echo "PYTHONPATH=$PYTHONPATH:/home/algo-visual-lab" >> $GITHUB_ENV
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10.9"
+
+      - name: Create virtual environment
+        run: |
+          python -m venv .venv
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+
+      # -------------------------
+      # Python pre-commit
+      # -------------------------
+
+      - name: Run pre-commit (linting/formatting/mypy etc)
+        shell: bash -l {0}
+        run: |
+          conda activate atlas
+          pre-commit run --all-files --show-diff-on-failure
+
+      # -------------------------
+      # Node.js setup
+      # -------------------------
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 25.9.0
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      # -------------------------
+      # Frontend linting
+      # -------------------------
+
+      - name: Run ESLint
+        run: npx eslint . --max-warnings=0
+
+      - name: Check Prettier formatting
+        run: npx prettier . --check
