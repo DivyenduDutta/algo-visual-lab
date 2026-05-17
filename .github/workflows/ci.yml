@@ -50,7 +50,7 @@ jobs:
       - name: Run pre-commit (linting/formatting/mypy etc)
         shell: bash -l {0}
         run: |
-          .venv\Scripts\activate.bat
+          source .venv/bin/activate
           pre-commit run --all-files --show-diff-on-failure
 
       # -------------------------
